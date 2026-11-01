@@ -23,8 +23,10 @@ def scan_port(host, port):
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.settimeout(1)  # Set timeout for connection attempt
+            # connect_ex folds every failure into a nonzero code that I never look at past the zero test. A refused connection, an unreachable host, and a filtered port that times out are all reported the same way: silence.
             result = s.connect_ex((host, port))
             if result == 0:  # Port is open
+                # If this lookup raises OSError for an open port with no registered service name, the handlers below catch it and I return None for the port. The port was open, but it reaches main as if it were closed, and nothing in the output separates the two cases.
                 service = socket.getservbyport(port, 'tcp') if port <= 65535 else 'Unknown'
                 return port, service
     except socket.error as e:
@@ -49,7 +51,9 @@ def main():
     logging.info(f"Starting scan on host: {host} from port {start_port} to {end_port}")
     
     try:
+        # I scan one port at a time and each attempt can sit for the full one second timeout, so a filtered host over the default range can hold this loop for close to seventeen minutes with no progress output between the start line and the finish line.
         for port in range(start_port, end_port + 1):
+            # Reusing the name port for the result is safe only because range already handed me the next value. It also means a None result erases the number I just scanned, so the log line inside scan_port is the only place a failed port number survives.
             port, service = scan_port(host, port)
             if port:
                 logging.info(f"Open port found: {port} (Service: {service})")
