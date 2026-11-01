@@ -6,18 +6,14 @@ Net-Ports is a cybersecurity tool designed to map open ports and identify runnin
 
 ### Installation Instructions
 
-To install Net-Ports, run the following command:
-
-```Bash
-pip install net-ports
-```
+Net-Ports is not published as a pip package. Clone the repository and run the tool from the cloned folder. No third-party packages are required: the tool uses only the Python standard library.
 
 ### Usage Examples
 
-To use Net-Ports, open a terminal window and type:
+To use Net-Ports, open a terminal window in the cloned folder and type:
 
 ```Bash
-net-ports [options] target
+python3 main.py target --start-port 1 --end-port 1024
 ```
 
 Where:
@@ -27,9 +23,11 @@ Where:
 
 Common options include:
 
-* `-p`: Specify a specific port or range of ports to scan.
-* `-s`: Enable stealth mode for discreet scanning.
-* `-v`: Verbose output for detailed results.
+* `--start-port`: Starting port number for the scan (default: 1).
+* `--end-port`: Ending port number for the scan (default: 1024).
+* `-h`: Show help message and exit.
+
+The start and end ports must each be within 1 to 65535, and the start must not exceed the end. An invalid range prints an error and exits 1 without scanning anything.
 
 ### Security Warnings
 

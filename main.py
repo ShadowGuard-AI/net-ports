@@ -1,6 +1,7 @@
 import socket
 import argparse
 import logging
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -40,6 +41,10 @@ def main():
     host = args.host
     start_port = args.start_port
     end_port = args.end_port
+
+    if not (1 <= start_port <= 65535) or not (1 <= end_port <= 65535) or start_port > end_port:
+        logging.error("Invalid port range: start and end ports must each be within 1 to 65535, and start must not exceed end.")
+        sys.exit(1)
 
     logging.info(f"Starting scan on host: {host} from port {start_port} to {end_port}")
     
